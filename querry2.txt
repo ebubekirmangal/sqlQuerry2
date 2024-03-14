@@ -1,0 +1,224 @@
+--26.Sorgu
+Select p.product_id,p.product_name,s.company_name,s.phone From products As p
+Inner Join suppliers As s On p.supplier_id = s.supplier_id;
+--27.Sorgu
+Select o.ship_address,e.first_name,e.last_name From orders As o 
+Inner Join employees As e On o.employee_id = e.employee_id
+Where Extract(Month From o.shipped_date) = 3 And Extract(Year From o.shipped_date)=1998;
+--28.Sorgu
+Select Count(*) From orders
+Where Extract(Month From shipped_date) = 2 And Extract(Year From shipped_date) =1997;
+--29.Sorgu
+Select Count(*) From orders
+Where ship_city ='London' And Extract(Year From shipped_date) = 1998;
+--30.Sorgu
+Select c.contact_name,c.phone From Orders As o 
+Inner Join customers As c On o.customer_id = c.customer_id
+Where Extract(Year From shipped_date)=1997;
+--31.Sorgu
+Select * From orders
+Where freight >= 40;
+--32.Sorgu
+Select orders.ship_city,customers.contact_name From orders
+Inner Join customers On orders.customer_id = customers.customer_id
+Where freight >= 40;
+--33.Sorgu
+Select o.order_date,o.ship_city,Upper(Concat(e.first_name,' ',last_name)) As Employee_name From orders As o
+Inner Join employees As e On o.employee_id = e.employee_id
+Where Extract(Year From o.shipped_date)= 1997;
+--34.Sorgu
+Select c.contact_name,c.phone From orders As o
+Inner Join customers As c On o.customer_id = c.customer_id
+Where Extract(Year From o.shipped_date)= 1997;
+--35.Sorgu
+Select o.order_date,c.contact_name,e.first_name,e.last_name From orders As o
+Inner Join employees As e On o.employee_id = e.employee_id
+Inner Join customers As c On o.customer_id = c.customer_id;
+--36.Sorgu
+Select * From orders 
+Where shipped_date > required_date
+--37.Sorgu
+Select o.shipped_date, c.company_name From orders As o
+Inner Join customers As c On o.customer_id = c.customer_id
+Where o.shipped_date > o.required_date;
+--38.Sorgu
+Select p.product_name,c.category_name,od.quantity From products As p
+Inner Join categories As c On p.category_id = c.category_id
+Inner Join order_details As od On  p.product_id = od.product_id
+Where od.order_id =10248;
+--39.Sorgu
+Select p.product_name,s.company_name From products As p
+Inner Join suppliers As s On p.supplier_id = s.supplier_id
+Inner Join order_details As od On  p.product_id = od.product_id
+Where od.order_id =10248;
+--40.Sorgu
+Select p.product_name,od.quantity From orders As o
+Inner Join order_details As od On  o.order_id = od.order_id
+Inner Join products As p On od.product_id = p.product_id
+Where o.employee_id =3 And Extract(Year From o.order_date) =1997;
+--41.Sorgu
+Select Distinct e.employee_id,e.first_name,e.last_name, od.quantity As total From employees as e
+Inner Join orders As o On o.employee_id = e.employee_id
+Inner Join order_details As od On o.order_id = od.order_id
+Where Extract(Year From o.order_date) =1997
+Order By total Desc Limit 1 ;
+--42.Sorgu
+Select Distinct e.employee_id,e.first_name,e.last_name, Sum(od.quantity) As total From employees as e
+Inner Join orders As o On o.employee_id = e.employee_id
+Inner Join order_details As od On o.order_id = od.order_id
+Where Extract(Year From o.order_date) =1997
+Group By e.employee_id,e.first_name,e.last_name
+Order By total Desc Limit 1 ;
+--43.Sorgu 
+Select p.product_name,p.unit_price,c.category_name From products As p
+Inner Join categories As c On p.category_id = c.category_id
+Order By p.unit_price Desc Limit 1;
+--44.Sorgu
+Select e.first_name,e.last_name,o.order_date,o.order_id From orders As o
+Inner Join employees As e On o.employee_id = e.employee_id
+Order By o.order_date;
+--45.Sorgu
+Select o.order_id, Avg(p.unit_price) From orders As o
+Inner Join order_details As od On o.order_id = od.order_id
+Inner Join products As p On od.product_id = p.product_id
+Group By o.order_id 
+Order By o.order_date Desc Limit 5;
+--46.Sorgu
+Select p.product_name,c.category_name,Sum(od.quantity) As total From order_details As od
+Inner Join products As p On od.product_id = p.product_id
+Inner Join categories As c On p.category_id = c.category_id
+Inner Join orders As o On od.order_id = o.order_id
+Where Extract(Month From o.order_date) = 1
+Group By p.product_name,c.category_name
+Order By total 
+--47.Sorgu
+Select order_id, Sum(quantity) As total_quantity From order_details
+Group By order_id
+Having Sum(quantity) > (Select Avg(sum_quantity) From 
+(Select Sum(quantity) As sum_quantity From order_details 
+Group By order_id) As subquery);
+--48.Sorgu
+Select c.category_name,s.company_name From products As p
+Inner Join categories As c On p.category_id = c.category_id
+Inner Join suppliers As s On p.supplier_id = s.supplier_id;
+--49.Sorgu
+Select Count(Distinct country) From customers;
+--50.Sorgu
+SELECT SUM(od.unit_price * quantity) FROM order_details AS od
+INNER JOIN orders AS o ON od.order_id = o.order_id
+WHERE o.employee_id=3 and o.order_date BETWEEN '1998-01-01' AND current_date;
+--63.Sorgu
+Select country,Count(customer_id) From customers
+Group By country;
+--65.Sorgu
+Select Round(Sum(od.unit_price * od.quantity)::numeric,2) As last_3_month From order_details As od
+Inner Join orders As o On od.order_id = o.order_id
+Where od.product_id = 10 and o.order_date >='1998-03-01';
+--66.Sorgu
+Select e.employee_id,Count(o.order_id) As how_many_orders From orders As o
+Inner Join employees As e On o.employee_id = e.employee_id
+Group By e.employee_id;
+--67.Sorgu 
+Select c.customer_id,Count(o.order_id) From orders As o
+Right Join customers As c On o.customer_id = c.customer_id
+Group By c.customer_id
+Having Count(o.order_id) = 0;
+--68.Sorgu
+Select company_name,contact_name,address,city,country From customers
+Where country ='Brazil';
+--69.Sorgu
+Select * From customers
+Where country != 'Brazil';
+--70.Sorgu
+Select * From customers
+Where country In('Spain','France','Germany');
+--71.Sorgu
+Select * From customers
+Where fax is Null;
+--72.Sorgu
+Select * From customers
+Where city In('London','Paris');
+--73.Sorgu
+Select country,city,contact_title From customers
+Where contact_title = 'Owner' And city = 'México D.F.';
+--74.Sorgu
+Select product_name,unit_price From products
+Where product_name Like('C%');
+--75.Sorgu
+Select first_name,last_name,birth_date From employees
+Where first_name Like('A%');
+--76.Sorgu
+Select company_name From customers
+Where Upper(company_name) Like('%RESTAURANT%');
+--77.Sorgu
+Select product_name,unit_price From products
+Where unit_price Between 50 And 100;
+--78.Sorgu
+Select order_id,order_date From orders
+Where order_date Between '1996-06-01' And '1996-12-31';
+--81.Sorgu
+Select customer_id,country From customers
+Order By country;
+--82.Sorgu
+Select product_name,unit_price From products
+Order By unit_price Desc;
+--83.Sorgu
+Select product_name,unit_price From products
+Order By unit_price Desc,units_in_stock Asc;
+--84.Sorgu
+Select c.category_name ,Count(p.product_id) As pieces From products As p
+Inner Join categories As c On p.category_id = c.category_id
+Group By c.category_id 
+Having c.category_id = 1;
+--85.Sorgu
+Select Count(Distinct ship_country) From orders;
+--86.Sorgu 
+Select Distinct ship_country From orders;
+--87.Sorgu
+Select * From products As p
+Order By p.unit_price Desc Limit 5;
+--88.Sorgu
+Select Count(o.order_id) As how_many_orders From orders o
+Inner Join customers c On o.customer_id = c.customer_id
+Group By c.customer_id 
+Having c.customer_id = 'ALFKI';
+--89.Sorgu
+Select Sum(unit_price * units_in_stock) AS total
+From products;
+--90.Sorgu
+Select Round(Sum(unit_price*quantity)::numeric,2) As endorsement From order_details
+--91.Sorgu
+Select Avg(unit_price) From products
+--92.Sorgu
+Select product_name from products
+Order By unit_price Desc Limit 1;
+--93.Sorgu
+Select order_id, Sum(unit_price * quantity) As total_profit
+From order_details
+Group By order_id
+Order By total_profit Asc
+Limit 1;
+--94.Sorgu
+Select company_name From customers 
+Order By Length(company_name) Desc Limit 1;
+--95.Sorgu
+Select first_name,last_name,(Date_Part('year',hire_date) - Date_Part('year',birth_date)) As age From employees;
+--96.Sorgu
+Select product_id,Sum(quantity) from order_details
+Group By product_id
+Order By product_id;
+--97.Sorgu
+Select order_id,Round(Sum(quantity*unit_price)::numeric,2) From order_details
+Group By order_id
+Order By order_id;
+--98.Sorgu
+Select category_id,Count(product_id) From products
+Group By category_id
+Order By category_id;
+--99.Sorgu
+Select od.product_id,p.product_name,Sum(od.quantity) From order_details As od
+Inner Join products As p On od.product_id = p.product_id
+Group By od.product_id,p.product_name
+Having Sum(od.quantity) >1000;
+--100.Sorgu
+--2 tanesi vermemiş aynısını öncekilerinde yapmıştık aralarda da önceki sorgulardan yaptığımız vardı onları yapmadım
